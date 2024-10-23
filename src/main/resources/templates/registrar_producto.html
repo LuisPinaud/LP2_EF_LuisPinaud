@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Agregar Producto</title>
+	<link rel="stylesheet" href="/css/bootstrap.min.css"></head></head>
+<body>
+	<div class="form-inline my-2 my-lg-0 ml-auto">
+        <img th:src="${'/foto_usuario/' + foto}" alt="Profile" class="profile-pic">
+        <a class="btn btn-outline-danger ml-2" th:href="@{/logout}" role="button">Logout</a>
+       </div>
+    <div class="container mt-5">
+        <h2>Agregar Producto</h2>
+        <form th:action="@{/registrar_producto}" th:object="${producto}" method="post" class="mt-4">
+           <div class="form-group">
+                <label for="nombreProducto">Nombre Producto</label>
+                <input type="text" th:field="*{nombreProducto}" class="form-control" id="nombreProducto" required>
+            </div>
+            <div class="form-group">
+                <label for="precio">Precio Producto</label>
+                <input type="number" step="0.01" th:field="*{precio}" class="form-control" id="precio">
+            </div>
+            <div class="form-group">
+                <label for="stock">Stock producto</label>
+                <input type="number" th:field="*{stock}" class="form-control" id="stock">
+            </div>
+            <div class="form-group">
+                <label for="categoriaEntity">Seleccione categoria</label>
+                <select th:field="*{categoriaEntity}" class="form-control" id="categoriaEntity" required>
+                    <option th:each="categoria : ${categorias}" 
+                            th:value="${categoria.categoriaId}" 
+                            th:text="${categoria.nombreCategoria}">
+                    </option>
+                </select>
+            </div>
+            <a th:href="@{/lista_producto}" class="btn btn-secondary">Atrás</a>
+            <button type="submit" class="btn btn-primary">Guardar Producto</button>
+        </form>
+    </div>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
