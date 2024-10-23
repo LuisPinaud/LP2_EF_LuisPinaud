@@ -7,5 +7,5 @@ import pe.com.cibertec.LP2_EF_LuisPinaud.model.UsuarioEntity;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<UsuarioEntity, String> {
-
+	UsuarioEntity findByCorreo(String correo); 
 }

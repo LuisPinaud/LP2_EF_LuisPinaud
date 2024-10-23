@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.servlet.http.HttpSession;
 import pe.com.cibertec.LP2_EF_LuisPinaud.model.UsuarioEntity;
 import pe.com.cibertec.LP2_EF_LuisPinaud.service.UsuarioService;
 
@@ -30,4 +31,26 @@ public class UsuarioController {
 		usuarioService.crearUsuario(usuarioEntity, foto);
 		return "registrar_usuario";
 	}
+	
+	@GetMapping("/")
+	public String vistaLogin(Model model) {
+		model.addAttribute("usuario", new UsuarioEntity());
+		return "login";
+	}
+	
+	@PostMapping("/login")
+	public String login(@ModelAttribute("usuario") UsuarioEntity usuarioIngresado,
+			Model model, HttpSession session) {
+		
+		boolean usuarioValidado = usuarioService.validacion(usuarioIngresado);
+		if(usuarioValidado) {
+			session.setAttribute("usuario", usuarioIngresado.getCorreo());
+			return "redirect:/lista_producto";
+		}
+		
+		model.addAttribute("loginInvalido","Credenciales incorrectas");
+		model.addAttribute("usuario", new UsuarioEntity());
+		return "login";
+	}
+	
 }

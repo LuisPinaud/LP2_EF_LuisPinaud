@@ -6,4 +6,6 @@ import pe.com.cibertec.LP2_EF_LuisPinaud.model.UsuarioEntity;
 
 public interface UsuarioService {
 	void crearUsuario(UsuarioEntity usuarioEntity, MultipartFile foto);
+	boolean validacion(UsuarioEntity usuarioEntity);
+
 }

@@ -27,4 +27,21 @@ public class UsuarioServiceImpl implements UsuarioService {
 		usuarioRepository.save(usuarioEntity);	
 	}
 
+	@Override
+	public boolean validacion(UsuarioEntity usuarioEntity) {
+		
+				UsuarioEntity usuarioObtenido = usuarioRepository.findByCorreo(usuarioEntity.getCorreo());
+				
+				if(usuarioObtenido == null) {
+					return false;
+				}
+				
+				if(!Utilitarios.checkPassword(usuarioEntity.getPassword(), 
+						usuarioObtenido.getPassword())) {
+					return false;
+				}
+				
+				return true;
+	}
+
 }

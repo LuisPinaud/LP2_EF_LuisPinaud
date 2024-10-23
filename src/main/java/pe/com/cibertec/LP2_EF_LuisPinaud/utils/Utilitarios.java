@@ -33,4 +33,8 @@ public class Utilitarios {
 	public static String extraerHashContra(String passwordOriginal) {
 		return BCrypt.hashpw(passwordOriginal, BCrypt.gensalt());
 	}
+	
+	public static boolean checkPassword(String passwordIngresado, String hashPassword) {
+		return BCrypt.checkpw(passwordIngresado, hashPassword);
+	}
 }
