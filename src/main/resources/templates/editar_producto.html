@@ -6,7 +6,8 @@
 	<link rel="stylesheet" href="/css/bootstrap.min.css"></head></head>
 <body>
 	<div class="form-inline my-2 my-lg-0 ml-auto">
-        <img th:src="${'/foto_usuario/' + foto}" alt="Profile" class="profile-pic">
+        <img th:src="${'/foto_usuario/' + foto}" alt="Profile" class="profile-pic" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+        <p>Bienvenido, <span th:text="${nombreUsuario}"></span></p>
         <a class="btn btn-outline-danger ml-2" th:href="@{/logout}" role="button">Logout</a>
        </div>
     <div class="container mt-5">

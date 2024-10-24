@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.servlet.http.HttpSession;
 import pe.com.cibertec.LP2_EF_LuisPinaud.model.CategoriaEntity;
 import pe.com.cibertec.LP2_EF_LuisPinaud.model.ProductoEntity;
+import pe.com.cibertec.LP2_EF_LuisPinaud.model.UsuarioEntity;
 import pe.com.cibertec.LP2_EF_LuisPinaud.service.CategoriaService;
 import pe.com.cibertec.LP2_EF_LuisPinaud.service.ProductoService;
+import pe.com.cibertec.LP2_EF_LuisPinaud.service.UsuarioService;
 import pe.com.cibertec.LP2_EF_LuisPinaud.service.impl.PdfService;
 
 @Controller
@@ -36,18 +38,31 @@ public class ProductoController {
 	@Autowired
 	private PdfService pdfService;
 	
+	@Autowired
+	private UsuarioService usuarioService;
+	
 	@GetMapping("/lista_producto")
 	public String listarProductos(Model model, HttpSession sesion) {
 		if(sesion.getAttribute("usuario")==null) {
 			return "redirect:/";
 		}
+		String correoS = sesion.getAttribute("usuario").toString();
+		UsuarioEntity usuarioObtenido = usuarioService.usuarioPorCorreo(correoS);
+		model.addAttribute("foto", usuarioObtenido.getUrlImagen());
+		model.addAttribute("nombreUsuario", usuarioObtenido.getNombre());
+		
 		List<ProductoEntity> listaPro = productoService.listarProducto();
 		model.addAttribute("listaprod", listaPro);
 		return "lista_producto";
 	}
 	
 	@GetMapping("/registrar_producto")
-	public String vistaRegistrarProducto(Model model) {
+	public String vistaRegistrarProducto(Model model, HttpSession sesion) {
+		String correoS = sesion.getAttribute("usuario").toString();
+		UsuarioEntity usuarioObtenido = usuarioService.usuarioPorCorreo(correoS);
+		model.addAttribute("foto", usuarioObtenido.getUrlImagen());
+		model.addAttribute("nombreUsuario", usuarioObtenido.getNombre());
+		
 		List<CategoriaEntity>listCategoria = categoriaService.obtenerCategorias();
 		model.addAttribute("categorias", listCategoria);
 		model.addAttribute("producto", new ProductoEntity());
@@ -62,7 +77,12 @@ public class ProductoController {
 	}
 	
 	@GetMapping("/ver_producto/{id}")
-	public String verDetalle(Model model, @PathVariable("id")Integer id) {
+	public String verDetalle(Model model, @PathVariable("id")Integer id, HttpSession sesion) {
+		String correoS = sesion.getAttribute("usuario").toString();
+		UsuarioEntity usuarioObtenido = usuarioService.usuarioPorCorreo(correoS);
+		model.addAttribute("foto", usuarioObtenido.getUrlImagen());
+		model.addAttribute("nombreUsuario", usuarioObtenido.getNombre());
+		
 		ProductoEntity encontradoPro = productoService.buscarProductoPorId(id);
 		model.addAttribute("producto", encontradoPro);
 		return "vista_producto";
@@ -75,7 +95,12 @@ public class ProductoController {
 	}
 	
 	@GetMapping("/editar_producto/{id}")
-	public String vistaModificarProducto(@PathVariable("id") Integer id, Model model) {
+	public String vistaModificarProducto(@PathVariable("id") Integer id, Model model, HttpSession sesion) {
+		String correoS = sesion.getAttribute("usuario").toString();
+		UsuarioEntity usuarioObtenido = usuarioService.usuarioPorCorreo(correoS);
+		model.addAttribute("foto", usuarioObtenido.getUrlImagen());
+		model.addAttribute("nombreUsuario", usuarioObtenido.getNombre());
+		
 		ProductoEntity encontradoPro = productoService.buscarProductoPorId(id);
 		List<CategoriaEntity> listaCategoria = categoriaService.obtenerCategorias();
 		model.addAttribute("categorias", listaCategoria);
@@ -92,22 +117,25 @@ public class ProductoController {
 	}
 	
 	@GetMapping("/generar_pdf")
-	public ResponseEntity<InputStreamResource>generarPDF()throws IOException{
-		// 1. Obtener todos los productos desde la base de datos
+	public ResponseEntity<InputStreamResource>generarPDF(HttpSession sesion)throws IOException{
+		
 	    List<ProductoEntity> listaProductos = productoService.listarProducto();
+	    String correoS = sesion.getAttribute("usuario").toString();
+		UsuarioEntity usuarioObtenido = usuarioService.usuarioPorCorreo(correoS);
+		
+		
 	    
-	    // 2. Crear el mapa de datos para el PDF
 	    Map<String, Object> datosPdf = new HashMap<>();
 	    datosPdf.put("productos", listaProductos);
+	    datosPdf.put("nombreUsuario", usuarioObtenido.getNombre());
 	    
-	    // 3. Generar el PDF usando el servicio de PDF y la plantilla
 	    ByteArrayInputStream pdfBytes = pdfService.generarPdf("template_pdf", datosPdf);
 	    
-	    // 4. Configurar los headers de la respuesta HTTP para que el PDF se muestre en línea
+	    
 	    HttpHeaders headers = new HttpHeaders();
 	    headers.add("Content-Disposition", "inline; filename=productos.pdf");
 	    
-	    // 5. Retornar el PDF como respuesta
+	    
 	    return ResponseEntity.ok()
 	            .headers(headers)
 	            .contentType(MediaType.APPLICATION_PDF)
