@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle Producto</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+</head>
+<body>
+<div class="form-inline my-2 my-lg-0 ml-auto">
+        <img th:src="${'/foto_usuario/' + foto}" alt="Profile" class="profile-pic">
+        
+        <a class="btn btn-outline-danger ml-2" th:href="@{/logout}" role="button">Logout</a>
+       </div>
+    <div class="container">
+        <h2>Detalle Producto</h2>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title" th:text="'Nombre: ' + ${producto.nombreProducto}">No existe</h5>
+                <p class="card-text" th:text="'Precio: '+ ${producto.precio}"></p>
+                <p class="card-text" th:text="'Stock: ' + ${producto.stock}"></p>
+                <p class="card-text" th:text="'Categoría: ' + ${producto.categoriaEntity.nombreCategoria}"></p>
+                
+                <a th:href="@{/lista_producto}" class="btn btn-secondary">Atrás</a>
+                <a th:href="@{/delete/{id}(id=${producto.productoId})}" class="btn btn-danger">Eliminar Producto</a>
+            </div>
+        </div>
+    </div>
+        
+  <script src="/js/bootstrap.bundle.min.js"></script> 
+</body>
+</html>

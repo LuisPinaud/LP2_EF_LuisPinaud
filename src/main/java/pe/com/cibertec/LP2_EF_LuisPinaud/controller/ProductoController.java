@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import jakarta.servlet.http.HttpSession;
@@ -45,6 +46,36 @@ public class ProductoController {
 	public String registrarProducto(@ModelAttribute("producto")ProductoEntity productoEntity,
 			Model model) {
 		productoService.crearProducto(productoEntity);
+		return "redirect:/lista_producto";
+	}
+	
+	@GetMapping("/ver_producto/{id}")
+	public String verDetalle(Model model, @PathVariable("id")Integer id) {
+		ProductoEntity encontradoPro = productoService.buscarProductoPorId(id);
+		model.addAttribute("producto", encontradoPro);
+		return "vista_producto";
+	}
+	
+	@GetMapping("/delete/{id}")
+	public String eliminarProducto(@PathVariable("id")Integer id) {
+		productoService.eliminarProducto(id);
+		return "redirect:/lista_producto";
+	}
+	
+	@GetMapping("/editar_producto/{id}")
+	public String vistaModificarProducto(@PathVariable("id") Integer id, Model model) {
+		ProductoEntity encontradoPro = productoService.buscarProductoPorId(id);
+		List<CategoriaEntity> listaCategoria = categoriaService.obtenerCategorias();
+		model.addAttribute("categorias", listaCategoria);
+		model.addAttribute("proEncontrado", encontradoPro);
+		return "editar_producto";
+	}
+	
+	@PostMapping("/editar_producto/{id}")
+	public String modificarProducto(@PathVariable("id")Integer id, 
+			@ModelAttribute("proEncontrado") ProductoEntity modificado, Model model) {
+		
+		productoService.actualizarProducto(id, modificado);
 		return "redirect:/lista_producto";
 	}
 }
